@@ -13,7 +13,7 @@ def get_hiker(hiker_id):
     if hiker:
         return hiker_schema.dump(hiker)
     else:
-        return {"message": f"Hiker with id {hiker_id} does not exist"}, 404
+        return {"message": f"Hiker {hiker.first_name} {hiker.last_name} does not exist"}, 404
     
 # Read all
 @hikers_bp.route("/")
@@ -22,7 +22,7 @@ def get_hikers():
     hikers_list = db.session.scalars(stmt)
     return hikers_schema.dump(hikers_list)
 
-# Create
+# Create hiker
 @hikers_bp.route("/", methods=["POST"])
 def create_hiker():
     body_data = hiker_schema.load(request.get_json())
@@ -36,7 +36,7 @@ def create_hiker():
     db.session.commit()
     return hiker_schema.dump(hiker), 201
 
-# Delete
+# Delete hiker
 @hikers_bp.route("/<int:hiker_id>", methods=["DELETE"])
 def delete_hiker(hiker_id):
     stmt = db.select(Hiker).filter_by(id=hiker_id)
@@ -48,7 +48,7 @@ def delete_hiker(hiker_id):
     else:
         return {"message": f"Hiker {hiker.first_name} {hiker.last_name} does not exist"}, 404
     
-# Update 
+# Update hiker
 @hikers_bp.route("/<int:hiker_id>", methods=["PUT", "PATCH"])
 def update_hiker(hiker_id):
     stmt = db.select(Hiker).filter_by(id=hiker_id)

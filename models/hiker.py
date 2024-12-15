@@ -2,7 +2,7 @@ from init import db, ma
 
 class Hiker(db.Model):
     # Table name 
-    __tablename__= "hikers"
+    __tablename__ = "hikers"
 
     # 
     id = db.Column(db.Integer, primary_key=True)
