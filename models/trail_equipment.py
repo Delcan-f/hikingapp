@@ -7,10 +7,10 @@ class TrailEquipment(db.Model):
     required_equipment = db.Column(db.String(100), nullable=False)
     recommended_equipment = db.Column(db.String(100), nullable=True)
 
-    hiker_id = db.Column(db.Integer, db.ForeignKey("hiker.id"), nullable=False)
+    equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"), nullable=False)
     trail_id = db.Column(db.Integer, db.ForeignKey("trail.id"), nullable=False)
 
-    hiker_id = db.relationship("Hikers", back_populates="trail_equipments")
+    equipment_id = db.relationship("Equipments", back_populates="trail_equipments")
     trail_id = db.relationship("Trails", back_populates="trail_equipments")
 
 class TrailEquipmentSchema(ma.Schema):
