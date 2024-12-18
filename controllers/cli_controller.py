@@ -121,8 +121,27 @@ def seed_tables():
 
     trail_equipments = [
         TrailEquipment(
-            required_equipment="",
-            recommended_equipment="",
-            
+            required_equipment="Backpack and Hiking Boots",
+            recommended_equipment="Backpack, Hiking Boots, Tent",
+            trail_id=trails[0].id,
+            equipment_id=equipments[0,1].id
+        ),
+        TrailEquipment(
+            required_equipment="Hiking Boots",
+            recommended_equipment="Hiking Boots",
+            trail_id=trails[2].id,
+            equipment_id=equipments[1].id
+        ),
+        TrailEquipment(
+            required_equipment="Backpack",
+            recommended_equipment="Backpack, Hiking Boots",
+            trail_id=trails[0].id,
+            equipment_id=equipments[0].id
         )
     ]
+
+    db.session.add_all(trail_equipments)
+
+    db.session.commit()
+
+    print("Tables seeded")
