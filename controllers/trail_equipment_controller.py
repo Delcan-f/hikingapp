@@ -15,7 +15,7 @@ def get_trail_equipment(trail_equipment_id):
     if trail_equipment:
         return trail_equipment_schema.dump(trail_equipment)
     else: # finish writing error response 
-        return {"message": f"write something here"}
+        return {"message": f"Trail Equipment written by {trail_equipment.hiker_id} about trail {trail_equipment.trail_id} does not exist"}
     
 # Read all
 @trail_equipments_bp.route("/")
@@ -27,16 +27,23 @@ def get_trail_equipments():
 # Create trail equipment
 @trail_equipments_bp.route("/<int:trail_equipment_id>", methods=["POST"])
 def create_trail_equipment():
-    body_data = trail_equipment_schema.load(request.get_json())
-    trail_equipment = TrailEquipment(
-        required_equipment=body_data.get("required_equipment"),
-        recommended_equipment=body_data.get("recommended_equipment"),
-        hiker_id=body_data.get("hiker_id"),
-        trail_id=body_data.get("trail_id")
-    )
-    db.session.add(trail_equipment)
-    db.session.commit()
-    return trail_equipment_schema.dump(trail_equipment), 201
+    try:
+        body_data = trail_equipment_schema.load(request.get_json())
+        trail_equipment = TrailEquipment(
+            required_equipment=body_data.get("required_equipment"),
+            recommended_equipment=body_data.get("recommended_equipment"),
+            hiker_id=body_data.get("hiker_id"),
+            trail_id=body_data.get("trail_id")
+        )
+        db.session.add(trail_equipment)
+        db.session.commit()
+        return trail_equipment_schema.dump(trail_equipment), 201
+    
+    except IntegrityError as err:
+            if err.otig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+                return {"message": f"{err.orig.diag.column_name} is required"}
+            if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+                return {"message": err.orig.diag.message_detail}, 409
 
 # Delete trail equipment 
 @trail_equipments_bp.route("/<int:trail_equipment_id>", methods=["DELETE"])

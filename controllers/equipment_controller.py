@@ -27,16 +27,20 @@ def get_equipments():
 # Create equipment 
 @equipments_bp.route("/<int:equipment_id>", methods=["POST"])
 def create_equipment(equipment_id):
-    body_data = equipment_schema.load(request.get_json())
-    equipment = Equipment(
-        equipment_name=body_data.get("equipment_name"),
-        equipment_type=body_data.get("equipment_type"),
-        weight=body_data.get("weight"),
-        description=body_data.get("description")
-    )
-    db.session.add(equipment)
-    db.session.commit()
-    return equipment_schema.dump(equipment), 201
+    try:
+        body_data = equipment_schema.load(request.get_json())
+        equipment = Equipment(
+            equipment_name=body_data.get("equipment_name"),
+            equipment_type=body_data.get("equipment_type"),
+            weight=body_data.get("weight"),
+            description=body_data.get("description")
+        )
+        db.session.add(equipment)
+        db.session.commit()
+        return equipment_schema.dump(equipment), 201
+    except IntegrityError as err:
+        if err.otig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message": f"{err.orig.diag.column_name} is required"}
 
 # Delete equipment
 @equipments_bp.route("/<int:equipment_id>", methods=["DELETE"])

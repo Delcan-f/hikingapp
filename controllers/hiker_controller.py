@@ -27,16 +27,23 @@ def get_hikers():
 # Create hiker
 @hikers_bp.route("/", methods=["POST"])
 def create_hiker():
-    body_data = hiker_schema.load(request.get_json())
-    hiker = Hiker(
-        first_name=body_data.get("first_name"),
-        last_name=body_data.get("last_name"),
-        email=body_data.get("email"),
-        phone_number=body_data.get("phone_number")
-    )
-    db.session.add(hiker)
-    db.session.commit()
-    return hiker_schema.dump(hiker), 201
+    try:
+        body_data = hiker_schema.load(request.get_json())
+        hiker = Hiker(
+            first_name=body_data.get("first_name"),
+            last_name=body_data.get("last_name"),
+            email=body_data.get("email"),
+            phone_number=body_data.get("phone_number")
+        )
+        db.session.add(hiker)
+        db.session.commit()
+        return hiker_schema.dump(hiker), 201
+    
+    except IntegrityError as err:
+        if err.otig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message": f"{err.orig.diag.column_name} is required"}
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 409
 
 # Delete hiker
 @hikers_bp.route("/<int:hiker_id>", methods=["DELETE"])

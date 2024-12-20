@@ -27,16 +27,23 @@ def get_trails():
 # Create trail
 @trails_bp.route("/<int:trail_id>", methods=["POST"])
 def create_trail():
-    body_data = trail_schema.load(request.get_json())
-    trail = Trail(
-        trail_name=body_data.get("trail_name"),
-        location=body_data.get("location"),
-        distance=body_data.get("distance"),
-        difficulty=body_data.get("difficulty")
-    )
-    db.session.add()
-    db.session.commit()
-    return trail_schema.dump(trail), 201
+    try:
+        body_data = trail_schema.load(request.get_json())
+        trail = Trail(
+            trail_name=body_data.get("trail_name"),
+            location=body_data.get("location"),
+            distance=body_data.get("distance"),
+            difficulty=body_data.get("difficulty")
+        )
+        db.session.add()
+        db.session.commit()
+        return trail_schema.dump(trail), 201
+    
+    except IntegrityError as err:
+        if err.otig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message": f"{err.orig.diag.column_name} is required"}
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 409
 
 # Delete trail
 @trails_bp.route("/<int:trail_id>", methods=["DELETE"])

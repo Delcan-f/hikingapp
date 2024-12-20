@@ -27,17 +27,24 @@ def get_hike_reviews():
 # Create hike review
 @hike_reviews_bp.route("/<int:hike_review_id>", methods=["POST"])
 def create_hike_review():
-    body_data = hike_review_schema.load(request.get_json())
-    hike_review = HikeReview(
-        review_date=body_data.get("review_date"),
-        rating=body_data.get("rating"),
-        comments=body_data.get("comments"),
-        hiker_id=body_data.get("hiker_id"),
-        trail_id=body_data.get("trail_id")
-    )
-    db.session.add(hike_review)
-    db.session.commit()
-    return hike_review_schema.dump(hike_review), 201
+    try:
+        body_data = hike_review_schema.load(request.get_json())
+        hike_review = HikeReview(
+            review_date=body_data.get("review_date"),
+            rating=body_data.get("rating"),
+            comments=body_data.get("comments"),
+            hiker_id=body_data.get("hiker_id"),
+            trail_id=body_data.get("trail_id")
+        )
+        db.session.add(hike_review)
+        db.session.commit()
+        return hike_review_schema.dump(hike_review), 201
+    
+    except IntegrityError as err:
+        if err.otig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {"message": f"{err.orig.diag.column_name} is required"}
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {"message": err.orig.diag.message_detail}, 409
 
 # Delete hike review 
 @hike_reviews_bp.route("/<int:hike_review_id>", methods=["DELETE"])
