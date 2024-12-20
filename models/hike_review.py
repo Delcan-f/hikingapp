@@ -1,5 +1,8 @@
 from datetime import date
 
+from marshmallow import fields, validates
+from marshmallow.exceptions import ValidationError
+
 from init import db, ma
 
 class HikeReview(db.Model):
@@ -17,6 +20,23 @@ class HikeReview(db.Model):
     trail = db.relationship("Trails", back_populates="hike_reviews")
 
 class HikeReviewSchema(ma.Schema):
+
+    @validates('review_date')
+    def validate_review_date(self, value):
+        today = date.today()
+        if date.fromisoformat(value) > today:
+            raise ValidationError("Review date cannot be for a future date")
+        
+    @validates('rating')
+    def validate_rating_max_value(self, value):
+        max_rating_value = 10
+        min_rating_value = 0
+        if float.fromisoformat(value) > max_rating_value:
+            raise ValidationError("Maximum rating number is 10")
+        
+        if float.fromisoformat(value) < min_rating_value:
+            raise ValidationError("Minimum rating value is 0")
+
     class Meta:
         fields = ("id", "review_date", "rating", "comments", "hiker_id", "trail_id", "hiker", "trail")
 

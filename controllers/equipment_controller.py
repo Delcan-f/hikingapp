@@ -1,4 +1,6 @@
 from flask import Blueprint, request
+from sqlalchemy.exc import IntegrityError
+from psycopg2 import errorcodes
 
 from init import db
 from models.equipment import Equipment, equipment_schema, equipments_schema

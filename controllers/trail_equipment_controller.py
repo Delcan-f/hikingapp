@@ -1,4 +1,6 @@
 from flask import Blueprint, request
+from sqlalchemy.exc import IntegrityError
+from psycopg2 import errorcodes
 
 from init import db
 from models.trail_equipment import TrailEquipment, trail_equipment_schema, trail_equipments_schema
