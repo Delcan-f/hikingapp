@@ -45,6 +45,8 @@ def seed_tables():
 
     db.session.add_all(hikers)
 
+    db.session.commit()
+
     trails = [
         Trail(
             trail_name="Cape to Cape Track",
@@ -67,6 +69,7 @@ def seed_tables():
     ]
 
     db.session.add_all(trails)
+    db.session.commit()
 
     equipments = [
         Equipment(
@@ -112,8 +115,8 @@ def seed_tables():
             review_date="2023-02-28",
             rating=9,
             comments="One of Australia’s most epic outback treks, the Larapinta Trail follows the spine of the rugged West MacDonnell Ranges in the Northern Territory. Expect towering red rock escarpments, refreshing waterholes and steep terrain, as well as the opportunity to visit sacred Aboriginal sites.",
-            hiker_id=hikers[2].id,
-            trail_id=trails[2].id
+            hiker_id=hikers[1].id,
+            trail_id=trails[1].id
         )
     ]
 
