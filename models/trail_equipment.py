@@ -1,3 +1,5 @@
+from marshmallow import fields, validates
+
 from init import db, ma
 
 class TrailEquipment(db.Model):
@@ -8,10 +10,10 @@ class TrailEquipment(db.Model):
     recommended_equipment = db.Column(db.String(100), nullable=True)
 
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"), nullable=False)
-    trail_id = db.Column(db.Integer, db.ForeignKey("trail.id"), nullable=False)
+    trail_id = db.Column(db.Integer, db.ForeignKey("trails.id"), nullable=False)
 
-    equipment_id = db.relationship("Equipments", back_populates="trail_equipments")
-    trail_id = db.relationship("Trails", back_populates="trail_equipments")
+    equipment_id = db.relationship("Equipment", back_populates="trail_equipment")
+    trail_id = db.relationship("Trail", back_populates="trail_equipment")
 
 class TrailEquipmentSchema(ma.Schema):
     class Meta:

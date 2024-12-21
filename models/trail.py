@@ -9,6 +9,9 @@ class Trail(db.Model):
     distance = db.Column(db.Integer, nullable=False)
     difficulty = db.Column(db.Integer, nullable=False)
 
+    hike_reviews = db.relationship("HikeReview", back_populates="trails", cascade="all, delete")
+    trail_equipments = db.relationship("TrailEquipment", back_populates="trails", cascade="all, delete")
+
 class TrailSchema(ma.Schema):
     class Meta:
         fields = ("id", "trail_name", "location", "distance", "difficulty")

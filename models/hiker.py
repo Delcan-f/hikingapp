@@ -11,6 +11,8 @@ class Hiker(db.Model):
     email_address = db.Column(db.String(100), nullable=False, unique=True)
     phone_number = db.Column(db.Integer, nullable=False, unique=True)
 
+    hike_reviews = db.relationship("HikeReview", back_populates="hikers", cascade="all, delete")
+
 class HikerSchema(ma.Schema):
     class Meta:
         fields = ("id", "first_name", "last_name", "email_address", "phone_number")

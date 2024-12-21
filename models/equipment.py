@@ -9,6 +9,8 @@ class Equipment(db.Model):
     weight = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(100), nullable=True)
 
+    trail_equipment = db.relationship("TrailEquipment", back_populates="equipment", cascade="all, delete")
+
 class EquipmentSchema(ma.Schema):
     class Meta:
         fields = ("id", "equipment_name", "equipment_type", "weight", "description")
