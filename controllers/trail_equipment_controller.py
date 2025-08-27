@@ -72,3 +72,4 @@ def update_trail_equipment(trail_equipment_id):
         return trail_equipment_schema.dump(trail_equipment)
     else: 
         return {"message": f"Trail equipment about trail {trail_equipment.trail_id} does not exist"}, 404
+    
